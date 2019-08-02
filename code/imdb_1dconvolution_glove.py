@@ -1,6 +1,6 @@
 '''
 Dataset: IMDB
-Algo : 1D Convolutional NN, Maxpooling, RELU activation, single Dense Layer
+Algo : 1D Convolutional NN, Maxpooling, RELU activation, 2 Dense Layer
 loss Categorical_crossentropy,ADAM optimizer
 Metric Accuracy
 '''
