@@ -3,9 +3,13 @@ examples with wordvectors
 
 ## dependencies
 numpy
+
 scipy
+
 sklearn
+
 keras
+
 tqdm (for pretty print)
 
 ## setup data
