@@ -23,7 +23,7 @@ MAX_NB_WORDS=25000 #top nb_words most common words
 MAX_SEQUENCE_LENGTH=1000 #max length of review
 N_GLOVE_TOKENS=400000
 EMBEDDING_DIM = 100
-NUMREV = 2 #number of reviews, total set: NUMREV positive + NUMREV negative
+NUMREV = 100 #number of reviews, total set: NUMREV positive + NUMREV negative
 
 #
 #PREPROCESSING
@@ -40,7 +40,7 @@ def preprocess_reviews(reviews):
 #
 positive_dir = "../data/aclImdb/train/pos"
 negative_dir = "../data/aclImdb/train/neg"
-glove_file="../data/glove.6B."+str(EMBEDDING_DIM)+"d.txt"
+glove_file="../data/glove/glove.6B."+str(EMBEDDING_DIM)+"d.txt"
 
 def read_text(filename):
         with open(filename) as f:
