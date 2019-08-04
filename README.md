@@ -22,3 +22,22 @@ tar -zxvf aclImdb_v1.tar.gz
 wget http://nlp.stanford.edu/data/glove.6B.zip
 unzip glove.6B.zip
 ```
+
+
+## Locally Trained Glove
+```bash 
+git clone https://github.com/rupsaijna/glove-python.git 
+cd glove-python 
+pip install glove-python
+python3 glove-python/examples/example.py -c IMDB_ConvTA/data/allreviews.txt -t 10 -p 4
+```
+
+The above code creates a glove.model and a corpus.model
+
+### Accessing vectors from locally trained model
+```python
+from glove import Glove
+gm=Glove.load('glove.model')
+print (gm.most_similar($query$, number=10))
+print (gm.word_vectors[gm.dictionary[$query$]])
+```
