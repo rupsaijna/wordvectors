@@ -10,12 +10,13 @@ import os
 import tqdm
 import numpy as np
 from sklearn.model_selection import train_test_split
-from keras.utils import np_utils
-from keras.models import Model
+from keras.utils import np_utils # changes  labels all to 0/1
+from keras.models import Model # for the modelling CNN model
 from keras.layers import Conv1D, Dense, Embedding, Flatten, Input, LSTM, MaxPooling1D
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
-import time
+from keras.preprocessing.text import Tokenizer # tokenizes sequence of words
+from keras.preprocessing.sequence import pad_sequences # for ensuring constant size of input
+import time # for timing
+
 #
 # Configuration
 #
@@ -26,10 +27,10 @@ EMBEDDING_DIM = 100
 NUMREV = 100 #number of reviews, total set: NUMREV positive + NUMREV negative
 
 #
-#PREPROCESSING
+# PREPROCESSING
 #
-REPLACE_NO_SPACE = re.compile("[.;:!\'?,\"()\[\]]")
-REPLACE_WITH_SPACE = re.compile("(<br\s*/><br\s*/>)|(\-)|(\/)")
+REPLACE_NO_SPACE = re.compile("[.;:!\'?,\"()\[\]]") # removes these symbols (piunctuation marks) 
+REPLACE_WITH_SPACE = re.compile("(<br\s*/><br\s*/>)|(\-)|(\/)") #changes tags , - , / with a space to maintain sense of a sentence.
 def preprocess_reviews(reviews):
     reviews = [REPLACE_NO_SPACE.sub("", line.lower()) for line in reviews]
     reviews = [REPLACE_WITH_SPACE.sub(" ", line) for line in reviews]
@@ -42,6 +43,7 @@ positive_dir = "../data/aclImdb/train/pos"
 negative_dir = "../data/aclImdb/train/neg"
 glove_file="../data/glove/glove.6B."+str(EMBEDDING_DIM)+"d.txt"
 
+# function which returns text ( lowercased ) from a file
 def read_text(filename):
         with open(filename) as f:
                 return f.read().lower()
@@ -49,27 +51,38 @@ def read_text(filename):
 print ("\nReading negative reviews.")
 negative_text = [read_text(os.path.join(negative_dir, filename))
         for filename in tqdm.tqdm(os.listdir(negative_dir))]
+
+""" print(negative_text[0])
+print("\n")
+print( preprocess_reviews( [ negative_text[0] ]  ) )
+raise SystemExit """
         
 print ("\nReading positive reviews.")
 positive_text = [read_text(os.path.join(positive_dir, filename))
         for filename in tqdm.tqdm(os.listdir(positive_dir))]
 
+## array of positive or negative reviews
+## tqdm gets pretty loading bars
 
 labels_index = { "negative": 0, "positive": 1 }
 
 labels = [0 for _ in range(NUMREV)] + [1 for _ in range(NUMREV)]
-
 texts = preprocess_reviews(negative_text[:NUMREV]) + preprocess_reviews(positive_text[:NUMREV])
+# Same number (defined by NUMREV)  of positive and negative reviews all in a list
 
-tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
-tokenizer.fit_on_texts(texts)
+tokenizer = Tokenizer(num_words=MAX_NB_WORDS) # initialise the tokeniser
+tokenizer.fit_on_texts(texts) # tokenises the text list
 sequences = tokenizer.texts_to_sequences(texts)
+## print(sequences[0], texts[0])
+## raise SystemExit
+
 word_index = tokenizer.word_index
 reverse_word_map = dict(map(reversed, tokenizer.word_index.items()))
 #print reverse_word_map
+print( "Length of the word index : ",len(word_index) )
 
 data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH) #all equal!
-labels = np_utils.to_categorical(np.asarray(labels))
+labels = np_utils.to_categorical(np.asarray(labels))  # turns word labels to categorical labels 
 print ("data.shape = {0}, labels.shape = {1}".format(data.shape, labels.shape))
 
 x_train, x_test, y_train, y_test = train_test_split(data, labels)
@@ -92,8 +105,10 @@ for word, i in word_index.items():
         if embedding_vector is not None:
                 embedding_matrix[i] = embedding_vector
 
+print( "shape of the embedding matrix : ", len(embedding_matrix) ); raise SystemExit;
 print ("\nEmbedding_matrix.shape = {0}".format(embedding_matrix.shape))
 print('\n')
+
 embedding_layer = Embedding(len(word_index)+1,
         EMBEDDING_DIM,
         weights=[embedding_matrix],
@@ -113,7 +128,6 @@ model = Model(sequence_input, preds)
 model.compile(loss="categorical_crossentropy",optimizer="adam",metrics=["acc"])
 
 model.summary()
-
 
 start = time.clock()
 history = model.fit(x_train, y_train, epochs=5, batch_size=128, validation_data=(x_test, y_test))
