@@ -32,6 +32,7 @@ pip install glove-python
 python3 glove-python/examples/example.py -c allreviews.txt -t 10 -p 4
 ```
 [combine all imdb reviews into one text file, one review per line and save it as allreviews.txt]
+
 The above code creates a glove.model and a corpus.model
 
 ### Accessing vectors from locally trained model
