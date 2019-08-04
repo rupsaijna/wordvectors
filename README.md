@@ -39,5 +39,5 @@ The above code creates a glove.model and a corpus.model
 from glove import Glove
 gm=Glove.load('glove.model')
 print (gm.most_similar('queen', number=10)) # 10 most similar words to 'queen'
-print (gm.word_vectors[gm.dictionary[$query$]]) # word vector representation of 'queen'
+print (gm.word_vectors[gm.dictionary['queen']]) # word vector representation of 'queen'
 ```
